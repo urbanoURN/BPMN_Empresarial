@@ -1,66 +1,299 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ´URN´ BPMN Empresarial — Laravel 10 + bpmn-js ´URN´
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplicación web para gestionar procesos BPMN: crear, editar, visualizar y exportar diagramas directamente desde el navegador.
 
-## About Laravel
+Desarrollada como prueba técnica para demostrar el dominio de **Laravel 10**, **MVC**, **buenas prácticas SOLID** e integración de librerías JavaScript modernas con **Vite**.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+##  Vistas del sistema
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Pantalla | Descripción |
+|---|---|
+| **Index** | Listado de procesos con búsqueda y paginación |
+| **Create** | Editor BPMN interactivo + formulario de datos |
+| **Edit** | Carga el diagrama guardado para modificarlo |
+| **Show** | Visualizador de solo lectura + exportar `.bpmn` |
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+##  Stack tecnolOgico
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+| Capa | Tecnología |
+|---|---|
+| Backend | Laravel 10 (PHP 8.1+) |
+| Base de datos | MySQL 8+ |
+| Frontend bundler | Vite |
+| Librería BPMN | bpmn-js (npm) |
+| UI | Bootstrap 5 + Bootstrap Icons |
+| Lenguaje de vistas | Blade (Laravel) |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+##  Funcionalidades implementadas
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Requeridas
+- [x] Tabla `processes` con todos los campos especificados
+- [x] Listado de procesos (index)
+- [x] Crear proceso con editor BPMN funcional
+- [x] Editar proceso cargando el XML guardado
+- [x] Ver proceso en modo solo lectura (`NavigatedViewer`)
+- [x] Guardar y recuperar XML en campo `bpmn_xml`
 
-### Premium Partners
+### Extras (puntos adicionales)
+- [x] Validación de campos con **Form Requests** separados
+- [x] Diseño responsive y limpio con **Bootstrap 5**
+- [x] Exportar diagrama como archivo **.bpmn**
+- [x] Búsqueda de procesos por nombre
+- [x] Paginación con persistencia de búsqueda
+- [x] Botón flotante en móvil (FAB)
+- [x] Palette de herramientas horizontal en móvil con scroll
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+---
 
-## Contributing
+##  Arquitectura del proyecto
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+El proyecto sigue el patrón **MVC** nativo de Laravel aplicando principios **SOLID**:
 
-## Code of Conduct
+```
+app/
+├── Http/
+│   ├── Controllers/
+│   │   └── ProcessController.php     # Responsabilidad única: solo orquesta
+│   └── Requests/
+│       ├── StoreProcessRequest.php   # Validación separada (SRP)
+│       └── UpdateProcessRequest.php  # Open/Closed: extensible sin tocar el controlador
+├── Models/
+│   └── Process.php                   # Modelo con $fillable explícito
+│
+resources/
+├── js/
+│   ├── app.js                        # Bootstrap JS global
+│   ├── bpmn-editor.js                # Solo para crear/editar (SRP)
+│   └── bpmn-viewer.js                # Solo para visualizar (SRP)
+├── css/
+│   └── app.css                       # Variables corporativas + responsive
+└── views/
+    ├── layouts/app.blade.php         # Layout base reutilizable
+    └── processes/
+        ├── index.blade.php
+        ├── create.blade.php
+        ├── edit.blade.php
+        └── show.blade.php
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Decisiones de diseño destacadas
 
-## Security Vulnerabilities
+- **Form Requests separados** para store y update: la validación no vive en el controlador.
+- **Route Model Binding**: Laravel resuelve el modelo automáticamente, sin `Process::find($id)` manual.
+- **JS por responsabilidad**: el editor y el viewer son archivos independientes — solo se cargan donde se necesitan.
+- **Vite con entrypoints separados**: carga optimizada por vista.
+- **Export sin librerías extra**: la exportación `.bpmn` usa una `Response` HTTP con headers correctos, sin dependencias innecesarias.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+##  Instalación y configuración local
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Requisitos previos
+
+Asegúrate de tener instalado:
+
+| Herramienta | Versión mínima |
+|---|                       ---|
+| PHP         | 8.1 o superior |
+| Composer    |       2.x      |
+| Node.js     | 18.x o superior|
+| npm         | 9.x o superior |
+| MySQL       | 8.0 o superior |
+| Git         | cualquier versión reciente |
+
+---
+
+### Paso 1 — Clonar el repositorio
+
+```bash
+git clone https://github.com/urbanoURN/BPMN_Empresarial.git
+cd BPMN_Empresarial
+```
+
+---
+
+### Paso 2 — Instalar dependencias PHP
+
+```bash
+composer install
+```
+
+---
+
+### Paso 3 — Instalar dependencias JavaScript
+
+```bash
+npm install
+```
+
+---
+
+### Paso 4 — Configurar el entorno
+
+Copia el archivo de entorno y genera la clave de la aplicación:
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+---
+
+### Paso 5 — Configurar la base de datos
+
+Abre el archivo `.env` y edita estas líneas con tus credenciales MySQL:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=bpmn_empresarial   # Nombre de tu base de datos
+DB_USERNAME=root            # Tu usuario MySQL
+DB_PASSWORD=                # Tu contraseña MySQL
+```
+
+Luego crea la base de datos en MySQL:
+
+```MySql
+CREATE DATABASE bpmn_empresarial CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+---
+
+### Paso 6 — Ejecutar migraciones y datos de ejemplo
+
+```bash
+# Solo migraciones
+php artisan migrate
+
+# Migraciones + datos de ejemplo (recomendado para ver el sistema funcionando)
+php artisan migrate --seed
+```
+
+---
+
+### Paso 7 — Compilar los assets
+
+```bash
+# Modo desarrollo (con hot reload) Pruebas Locales
+npm run dev
+
+# Modo producción (para entrega final) *Pruebas* en Vivo
+npm run build
+```
+
+---
+
+### Paso 8 — Levantar el servidor
+
+```bash
+php artisan serve
+```
+
+Abre tu navegador en: **http://localhost:8000**
+
+---
+
+##  Datos de ejemplo (Seeder)
+
+El proyecto incluye un seeder con **3 procesos BPMN de ejemplo** para que puedas ver el sistema funcionando sin necesidad de crear datos manualmente.
+
+Para ejecutarlo de forma aislada:
+
+```bash
+php artisan db:seed --class=ProcessSeeder
+```
+
+Para reiniciar la base de datos con datos frescos:
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+---
+
+##  Rutas disponibles
+
+| Método | URI | Acción | Descripción |
+|---|---|---|---|
+| GET | `/processes` | index | Listado con búsqueda y paginación |
+| GET | `/processes/create` | create | Formulario + editor BPMN |
+| POST | `/processes` | store | Guardar nuevo proceso |
+| GET | `/processes/{id}` | show | Ver diagrama en solo lectura |
+| GET | `/processes/{id}/edit` | edit | Editar proceso existente |
+| PUT | `/processes/{id}` | update | Actualizar proceso |
+| DELETE | `/processes/{id}` | destroy | Eliminar proceso |
+| GET | `/processes/{id}/export` | export | Descargar archivo `.bpmn` |
+
+---
+
+##  Comandos útiles de desarrollo
+
+```bash
+# Ver todas las rutas registradas
+php artisan route:list
+
+# Limpiar caché de configuración
+php artisan config:clear
+
+# Limpiar caché de vistas
+php artisan view:clear
+
+# Reiniciar base de datos con seeders
+php artisan migrate:fresh --seed
+
+# Compilar assets para producción
+npm run build
+```
+
+---
+
+##  Variables de entorno importantes
+
+| Variable | Descripción | Valor por defecto |
+|---|---|---|
+| `APP_NAME` | Nombre de la app | `BPMN Empresarial` |
+| `APP_ENV` | Entorno | `local` |
+| `APP_DEBUG` | Modo debug | `true` |
+| `APP_URL` | URL base | `http://localhost:8000` |
+| `DB_CONNECTION` | Motor de BD | `mysql` |
+| `DB_DATABASE` | Nombre de la BD | `bpmn_empresarial` |
+| `DB_USERNAME` | Usuario MySQL | `root` |
+| `DB_PASSWORD` | Contraseña MySQL | _(vacío)_ |
+
+---
+
+##  Cómo usar el editor BPMN
+
+1. Ve a **Nuevo Proceso** desde el navbar o el botón flotante (móvil)
+2. Completa el nombre y descripción del proceso
+3. En el canvas del editor:
+   - **Arrastra** elementos del panel de herramientas al canvas
+   - **Conecta** elementos pasando el cursor sobre uno hasta ver el punto de conexión
+   - **Doble clic** sobre cualquier elemento para editarlo
+   - Usa los botones de la toolbar: **deshacer**, **rehacer**, **centrar vista**
+4. Haz clic en **Guardar Proceso** — el XML se extrae automáticamente y se persiste en la base de datos
+
+Para **exportar** un diagrama como archivo `.bpmn`, entra en la vista de detalle (solo lectura) y haz clic en **Exportar .bpmn**.
+
+---
+
+##  Autor
+
+Desarrollado como prueba técnica — **[Edinson Urbano]**
+
+- GitHub: https://github.com/urbanoURN
+- Portafolio: https://portafoliourn.netlify.app/
+- Email: edinsondevurn@gmail.com
+
+---
+
+##  Licencia??
+
+Este proyecto fue desarrollado con fines de evaluación tecnica.
