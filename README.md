@@ -139,7 +139,8 @@ npm install
 Copia el archivo de entorno y genera la clave de la aplicación:
 
 ```bash
-cp .env.example .env
+Linux - Unix =  cp .env.example .env 
+Windows =  copy .env.example .env
 php artisan key:generate
 ```
 
@@ -153,12 +154,12 @@ Abre el archivo `.env` y edita estas líneas con tus credenciales MySQL:
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=bpmn_empresarial   # Nombre de tu base de datos
+DB_DATABASE=bpmn_empresarial   # Nombre de tu base de datos por defecto para la prueba
 DB_USERNAME=root            # Tu usuario MySQL
 DB_PASSWORD=                # Tu contraseña MySQL
 ```
 
-Luego crea la base de datos en MySQL:
+Luego ejecuta este script SQL creara la base de datos en MySQL: PhPMyAdmin
 
 ```MySql
 CREATE DATABASE bpmn_empresarial CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -178,7 +179,7 @@ php artisan migrate --seed
 
 ---
 
-### Paso 7 — Compilar los assets
+### Paso 7 — Compilar el assets de tu preferencia 
 
 ```bash
 # Modo desarrollo (con hot reload) Pruebas Locales
@@ -190,9 +191,10 @@ npm run build
 
 ---
 
-### Paso 8 — Levantar el servidor
+### Paso 8 — Levantar el servidor 
 
 ```bash
+# preferiblemente en otra ventana bash (CMD u Otro) dentro de la misma ruta del repositorio
 php artisan serve
 ```
 
