@@ -4,6 +4,8 @@ Aplicación web para gestionar procesos BPMN: crear, editar, visualizar y export
 
 Desarrollada como prueba técnica para demostrar el dominio de **Laravel 10**, **MVC**, **buenas prácticas SOLID** e integración de librerías JavaScript modernas con **Vite**.
 
+<img width="1826" height="950" alt="BPMN" src="https://github.com/user-attachments/assets/736095d7-4dc1-4e7a-97cd-02b72db86f3b" />
+
 ---
 
 ##  Vistas del sistema
